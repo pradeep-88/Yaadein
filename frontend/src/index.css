@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+/* Animations */
+@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+@keyframes huerotate { to { filter: hue-rotate(360deg) } }
+@keyframes btnshine { 0% { background-position: 0% 50% } 100% { background-position: 200% 50% } }
+
+/* ---------------- THEME VARIABLES (Light) ---------------- */
+:root {
+  --bg: #f8fafc;           /* page background */
+  --text: #0f172a;         /* default text */
+  --muted: #475569;
+
+  --nav-bg: #2563eb;       /* navbar background */
+  --nav-text: #ffffff;
+
+  --card-bg: #ffffff;      /* card/panel bg */
+  --card-border: #e5e7eb;
+  --card-hover: #f7f9fc;
+
+  --field-bg: #ffffff;     /* inputs */
+  --field-border: #e5e7eb;
+  --ring: #60a5fa;
+  --ring-soft: rgba(96,165,250,.25);
+
+  --btn-bg: #ffffff;       /* nav button */
+  --btn-text: #2563eb;
+  --btn-hover: #f3f4f6;
+
+  --logout-bg: #ffffff;
+  --logout-text: #2563eb;
+  --logout-hover: #eef2ff;
+
+  --glow: 0 0 0 0 rgba(0,0,0,0);
+}
+
+/* ---------------- THEME VARIABLES (Dark) ---------------- */
+:root[data-theme="dark"] {
+  /* Surfaces & text */
+  --bg: #0b1220;
+  --text: #e6edf3;
+  --muted: #9fb0c2;
+
+  /* Navigation */
+  --nav-bg: #0d1326;
+  --nav-text: #e6edf3;
+
+  /* Cards / panels */
+  --card-bg: #111a2b;
+  --card-border: #1e2a3d;
+  --card-hover: #132038;
+
+  /* Inputs / fields */
+  --field-bg: #0f192b;
+  --field-border: #25344a;
+  --ring: #2457d6;
+  --ring-soft: rgba(36,87,214,.28);
+
+  /* Accents */
+  --accent: #6ea8fe;
+  --accent-2: #a78bfa;
+  --accent-3: #22d3ee;
+
+  /* Buttons in nav */
+  --btn-bg: #0f172a;
+  --btn-text: #cfe2ff;
+  --btn-hover: #1b2540;
+
+  /* Logout */
+  --logout-bg: #172033;
+  --logout-text: #ffb4b4;
+  --logout-hover: #2a3347;
+
+  /* Tasteful glow */
+  --glow: 0 0 0 0 rgba(0,0,0,0), 0 0 14px rgba(110,168,254,.18);
+
+  /* smoother theme transitions */
+  --transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+/* ---------------- App mappings ---------------- */
+html, body { background: var(--bg); color: var(--text); }
+
+.app-nav {
+  background: var(--nav-bg);
+  color: var(--nav-text);
+  border-bottom: 1px solid color-mix(in oklab, var(--nav-text) 10%, transparent);
+}
+
+.app-btn {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid color-mix(in oklab, var(--btn-text) 25%, transparent);
+  transition: background .15s ease, box-shadow .2s ease;
+}
+.app-btn:hover { background: var(--btn-hover); box-shadow: var(--glow); }
+
+.app-logout {
+  background: var(--logout-bg);
+  color: var(--logout-text);
+  border: 1px solid color-mix(in oklab, var(--logout-text) 25%, transparent);
+  transition: background .15s ease, box-shadow .2s ease;
+}
+.app-logout:hover { background: var(--logout-hover); box-shadow: var(--glow); }
+
+.app-main { background: transparent; }
+
+/* ---------------- Utility-safe overrides (so Tailwind classes adapt) ---------------- */
+.bg-white, .bg-white\/90, .bg-gray-50 { background-color: var(--card-bg) !important; }
+.border, .border-gray-100, .border-gray-200 { border-color: var(--card-border) !important; }
+.text-gray-600, .text-gray-700 { color: var(--muted) !important; }
+
+/* Inputs / selects / textarea base + focus */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  background: var(--field-bg) !important;
+  color: var(--text) !important;
+  border-color: var(--field-border) !important;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 2px var(--ring-soft) !important;
+}
+
+/* Common hover utility used across cards */
+.hover\:bg-gray-50:hover { background: var(--card-hover) !important; }
+
+/* Pills / chips */
+.badge, .chip {
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
+  color: color-mix(in oklab, var(--text) 85%, white);
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+/* Gradient accent helper */
+.gradient-accent { background-image: linear-gradient(90deg, #3b82f6, #8b5cf6, #22d3ee); }
+
+/* ---------------- Dark-mode polish & fixes ---------------- */
+* { transition: var(--transition); }
+
+/* Map more Tailwind bg utilities that appear in your layout to card bg in dark */
+.bg-white\/80,
+.bg-white\/70,
+.bg-gray-100,
+.bg-gray-200 { background-color: var(--card-bg) !important; }
+
+/* Sticky subheader that used bg-white/60 */
+.supports-\[backdrop-filter\]\:bg-white\/60,
+.bg-white\/60 { background-color: var(--card-bg) !important; }
+
+/* Borders commonly used on inputs */
+.border-gray-300, .border-gray-400 { border-color: var(--field-border) !important; }
+
+/* Placeholder contrast */
+::placeholder { color: color-mix(in oklab, var(--muted) 75%, transparent) !important; }
+
+/* Select dropdown appearance on dark */
+select, option { background: var(--field-bg) !important; color: var(--text) !important; }
+select { color-scheme: dark; }
+
+/* Tailwind blues tuned for dark */
+.bg-blue-600 { background-color: #2f5dd6 !important; }
+.hover\:bg-blue-700:hover { background-color: #2a50b8 !important; }
+
+/* Chip subtle outline */
+.badge, .chip { box-shadow: 0 0 0 1px color-mix(in oklab, var(--accent) 30%, transparent); }
+
+/* Text utilities touch-up */
+.text-gray-800 { color: var(--text) !important; }
+.text-blue-600 { color: var(--accent) !important; }
+.hover\:underline { text-underline-offset: 2px; }
+
+/* Optional: nicer scrollbars on dark */
+@supports (scrollbar-color: auto) {
+  :root[data-theme="dark"] { scrollbar-color: #32415c var(--bg); }
+}
