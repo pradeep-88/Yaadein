@@ -12,7 +12,6 @@ const app = express()
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://localhost:5174",
   "https://isp-q3ei.vercel.app",
 ];
 if (process.env.FRONTEND_URL) {
