@@ -63,8 +63,6 @@ ISP/
 │   │   └── router/      # Routes
 │   ├── .env             # VITE_BACKEND_URL
 │   └── index.html
-├── README.md            # This file
-└── package-lock.json    # Root (if any)
 ```
 
 ---
@@ -322,20 +320,8 @@ Deploy the **backend first** so you have an API URL, then deploy the **frontend*
 
 ---
 
-### 4. Optional: Same repo, two Render services
 
-If you prefer one repo and two Render services (e.g. frontend on Render too), create a second **Static Site** for `frontend` with build command `npm run build` and publish directory `dist`, and set `VITE_BACKEND_URL` in the static site’s environment. The steps above use Vercel for the frontend as requested.
 
----
 
-## Deployment Notes (reference)
 
-- **Backend:** Set `PORT`, `MONGO_URI`, `JWT_SECRET`, and (if used) Google and Cloudinary vars. Set `FRONTEND_URL` to your frontend origin for CORS and OAuth.
-- **Frontend:** Set `VITE_BACKEND_URL` to your deployed backend API URL (e.g. `https://your-backend.onrender.com/api`), then build and deploy (e.g. Vercel).
-- **Google OAuth:** In Google Cloud Console, add your production redirect URI (e.g. `https://your-backend.onrender.com/api/auth/google/callback`) to the OAuth client.
 
----
-
-## License
-
-ISC (or as specified in the project).
