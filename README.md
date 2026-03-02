@@ -253,11 +253,86 @@ Protected routes expect header: `Authorization: Bearer <JWT>`.
 
 ---
 
-## Deployment Notes
+## Deployment: Frontend (Vercel) + Backend (Render)
 
-- **Backend:** Set `PORT`, `MONGO_URI`, `JWT_SECRET`, and (if used) Google and Cloudinary vars. Add your frontend URL to CORS in `server.js` and to `FRONTEND_URL` for OAuth redirects.
-- **Frontend:** Set `VITE_BACKEND_URL` to your deployed backend API URL, then `npm run build` and serve the `dist/` folder (e.g. Vercel, Netlify).
-- **Google OAuth:** In Google Cloud Console, add your production redirect URI (e.g. `https://your-api.com/api/auth/google/callback`) to the OAuth client.
+Deploy the **backend first** so you have an API URL, then deploy the **frontend** pointing to it.
+
+---
+
+### 1. Deploy Backend on Render
+
+1. **Push your code** to GitHub (backend must be in the repo; monorepo with `backend/` folder is fine).
+
+2. **Create a Web Service** on [Render](https://render.com):
+   - Dashboard → **New** → **Web Service**.
+   - Connect your GitHub repo and select it.
+   - **Settings:**
+     - **Root Directory:** `backend`
+     - **Runtime:** Node
+     - **Build Command:** `npm install`
+     - **Start Command:** `npm start`
+     - **Instance type:** Free (or paid if you need no cold starts).
+
+3. **Environment variables** (Render → your service → **Environment**):
+   - `MONGO_URI` — MongoDB Atlas connection string (e.g. `mongodb+srv://user:pass@cluster.mongodb.net/yaadein`)
+   - `JWT_SECRET` — Long random string (e.g. 32+ chars)
+   - `FRONTEND_URL` — Your Vercel app URL **with no trailing slash** (e.g. `https://your-app.vercel.app`). Used for CORS and Google OAuth redirects.
+   - Optional: `CLOUDINARY_*`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL` (see below).
+
+4. **Save** and let Render build and deploy. Note your backend URL, e.g. `https://your-backend.onrender.com`.  
+   - Free tier may spin down after inactivity; first request can be slow (cold start).
+
+5. **Google OAuth (if used):** In [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → your OAuth client:
+   - Add **Authorized redirect URI:** `https://your-backend.onrender.com/api/auth/google/callback`
+   - In Render env, set `GOOGLE_CALLBACK_URL=https://your-backend.onrender.com/api/auth/google/callback` and `FRONTEND_URL=https://your-app.vercel.app`.
+
+---
+
+### 2. Deploy Frontend on Vercel
+
+1. **Create a project** on [Vercel](https://vercel.com):
+   - **Add New** → **Project** → Import your GitHub repo.
+   - **Root Directory:** set to `frontend` (not the repo root).
+   - **Framework Preset:** Vite (auto-detected).
+   - **Build Command:** `npm run build` (default).
+   - **Output Directory:** `dist` (default for Vite).
+
+2. **Environment variable:**
+   - Add **Variable:** `VITE_BACKEND_URL` = `https://your-backend.onrender.com/api`  
+     (use your real Render URL; **no trailing slash**).
+
+3. **Deploy.** Vercel will build and give you a URL like `https://your-app.vercel.app`.
+
+4. **SPA routing:** The repo includes `frontend/vercel.json` so routes like `/dashboard` and `/folder/:id` work (all requests fall back to `index.html`).
+
+5. **Point backend at frontend:** In Render, ensure `FRONTEND_URL` is set to your Vercel URL (e.g. `https://your-app.vercel.app`) so CORS and Google redirects work.
+
+---
+
+### 3. Quick checklist
+
+| Where   | Variable / Setting        | Value / Note                                      |
+|--------|---------------------------|---------------------------------------------------|
+| Render | `MONGO_URI`               | MongoDB Atlas URI                                 |
+| Render | `JWT_SECRET`              | Long random secret                                |
+| Render | `FRONTEND_URL`            | `https://your-app.vercel.app` (no trailing slash) |
+| Render | `GOOGLE_CALLBACK_URL`     | `https://your-backend.onrender.com/api/auth/google/callback` (if using Google) |
+| Vercel | `VITE_BACKEND_URL`        | `https://your-backend.onrender.com/api` (no trailing slash) |
+| Google | Authorized redirect URI   | Same as `GOOGLE_CALLBACK_URL`                     |
+
+---
+
+### 4. Optional: Same repo, two Render services
+
+If you prefer one repo and two Render services (e.g. frontend on Render too), create a second **Static Site** for `frontend` with build command `npm run build` and publish directory `dist`, and set `VITE_BACKEND_URL` in the static site’s environment. The steps above use Vercel for the frontend as requested.
+
+---
+
+## Deployment Notes (reference)
+
+- **Backend:** Set `PORT`, `MONGO_URI`, `JWT_SECRET`, and (if used) Google and Cloudinary vars. Set `FRONTEND_URL` to your frontend origin for CORS and OAuth.
+- **Frontend:** Set `VITE_BACKEND_URL` to your deployed backend API URL (e.g. `https://your-backend.onrender.com/api`), then build and deploy (e.g. Vercel).
+- **Google OAuth:** In Google Cloud Console, add your production redirect URI (e.g. `https://your-backend.onrender.com/api/auth/google/callback`) to the OAuth client.
 
 ---
 
